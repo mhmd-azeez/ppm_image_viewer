@@ -5,7 +5,8 @@
 
 #include <raylib.h>
 
-#define FILENAME "image.ppm"
+#define FILENAME "image_small.ppm"
+#define MAX_SCALE 3 // max zoom 3x
 
 typedef struct ParsedImage
 {
@@ -186,7 +187,10 @@ int main(void)
 
 		Rectangle source = { 0, 0, texture.width, texture.height };
 		
-		float scale = fminf((float)screenWidth / texture.width, (float)screenHeight / texture.height);
+		float scale = fminf(MAX_SCALE,
+			fminf((float)screenWidth / texture.width, (float)screenHeight / texture.height)
+		);
+
 		Rectangle dest = {
 			.x = (screenWidth - (texture.width * scale)) / 2, // center X
 			.y = (screenHeight - (texture.height * scale)) / 2, // center Y
@@ -195,6 +199,10 @@ int main(void)
 		};
 
 		DrawTexturePro(texture, source, dest, (Vector2){0,0}, 0, WHITE);
+
+		char scaleText[32];
+		sprintf(scaleText, "Scale: %.1f", scale);
+		DrawText(scaleText, 10, 10, 20, RED);
 
 		EndDrawing();
 	}
