@@ -148,18 +148,29 @@ void free_image(ParsedImage *img)
 
 int main(void)
 {
+	// Window setup
+	const int screenWidth = 800;
+	const int screenHeight = 600;
+
+	SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+	InitWindow(screenWidth, screenHeight, "Image Viewer");
+	SetTargetFPS(60);
+
 	ParsedImage *img = read_image();
 	if (img == NULL) {
 		printf("waaaaaa\n");
 		return 1;
 	}
 
-	// Window setup
-	const int screenWidth = img->width; // for now, we wont do any scaling!
-	const int screenHeight = img->height;
+	Image rayImg = {
+		.data = img->pixels,
+		.width = img->width,
+		.height = img->height,
+		.format = PIXELFORMAT_UNCOMPRESSED_R8G8B8A8,
+		.mipmaps = 1
+	};
 
-	InitWindow(screenWidth, screenHeight, "Image Viewer");
-	SetTargetFPS(60);
+	Texture2D texture = LoadTextureFromImage(rayImg);
 
 	// Main loop
 	while (!WindowShouldClose())
@@ -170,17 +181,17 @@ int main(void)
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
 
-		for (int x = 0; x < img->width; x++) {
-			for (int y = 0; y < img->height; y++) {
-				Color pixel = img->pixels[(y * img->width) + x];
-				DrawPixel(x, y, pixel);
-			}
-		}
+		Rectangle source = { 0, 0, texture.width, texture.height };
+		Rectangle dest = { 0, 0, GetScreenWidth(), GetScreenHeight() };
+
+		DrawTexturePro(texture, source, dest, (Vector2){0,0}, 0, WHITE);
 
 		EndDrawing();
 	}
 
 	CloseWindow();
+
+	UnloadTexture(texture);
 	// xxx(mo): we actually shouldnt free this (since the app is exiting anyways!).
 	// but i added this just to practice writing free functions for structs!
 	free_image(img);
