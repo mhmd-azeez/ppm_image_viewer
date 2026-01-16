@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #include <raylib.h>
 
@@ -149,8 +150,8 @@ void free_image(ParsedImage *img)
 int main(void)
 {
 	// Window setup
-	const int screenWidth = 800;
-	const int screenHeight = 600;
+	int screenWidth = 800;
+	int screenHeight = 600;
 
 	SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 	InitWindow(screenWidth, screenHeight, "Image Viewer");
@@ -176,13 +177,22 @@ int main(void)
 	while (!WindowShouldClose())
 	{
 		// Update
+		screenWidth = GetScreenWidth();
+		screenHeight = GetScreenHeight();
 
 		// Draw
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
 
 		Rectangle source = { 0, 0, texture.width, texture.height };
-		Rectangle dest = { 0, 0, GetScreenWidth(), GetScreenHeight() };
+		
+		float scale = fminf((float)screenWidth / texture.width, (float)screenHeight / texture.height);
+		Rectangle dest = {
+			.x = (screenWidth - (texture.width * scale)) / 2, // center X
+			.y = (screenHeight - (texture.height * scale)) / 2, // center Y
+			.width = texture.width * scale,
+			.height = texture.height * scale,
+		};
 
 		DrawTexturePro(texture, source, dest, (Vector2){0,0}, 0, WHITE);
 
