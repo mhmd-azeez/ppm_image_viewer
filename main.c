@@ -150,6 +150,12 @@ void free_image(ParsedImage *img)
 
 int main(void)
 {
+	ParsedImage *img = read_image();
+	if (img == NULL) {
+		printf("AAAAAAAAAAAAAAAAA \\(”˚☐˚)/\n");
+		return 1;
+	}
+
 	// Window setup
 	int screenWidth = 800;
 	int screenHeight = 600;
@@ -157,12 +163,6 @@ int main(void)
 	SetConfigFlags(FLAG_WINDOW_RESIZABLE);
 	InitWindow(screenWidth, screenHeight, "Image Viewer");
 	SetTargetFPS(60);
-
-	ParsedImage *img = read_image();
-	if (img == NULL) {
-		printf("waaaaaa\n");
-		return 1;
-	}
 
 	Image rayImg = {
 		.data = img->pixels,
