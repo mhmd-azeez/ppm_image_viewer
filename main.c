@@ -113,7 +113,7 @@ ParsedImage *read_image()
 		return NULL;
 	}
 
-	// xxx(mo): reading the whole file is faster
+	// xxx(mo): reading the whole file in one go would be faster, but oh well ¯\_(ツ)_/¯
 	for (int i = 0; i < pixelCount; i++) {
 		unsigned char  rgb[3];
 		if (fread(rgb, 1, 3, fp) != 3) {
@@ -209,7 +209,6 @@ int main(void)
 
 	CloseWindow();
 
-	UnloadTexture(texture);
 	// xxx(mo): we actually shouldnt free this (since the app is exiting anyways!).
 	// but i added this just to practice writing free functions for structs!
 	free_image(img);
